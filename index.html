@@ -203,43 +203,76 @@
     }
 
     // XỬ LÝ ĐỌC ĐAN XEN VIỆT - ANH
+    // HÀNG ĐỢI ÂM THANH XỬ LÝ LỖI ĐỌC TỪ VIẾT TẮT TIẾNG ANH (I'M, DON'T, CAN'T...)
+    let speechQueue = [];
+    let currentUtteranceIndex = 0;
+
     function speakResponse() {
       const text = document.getElementById('responseBox').innerText;
       if (!text || text.includes("Câu trả lời của Chatbot")) return;
 
-      resetPauseButton();
-      window.speechSynthesis.cancel();
+      stopSpeech(); // Xóa sạch hàng đợi cũ trước khi đọc mới
 
+      // 1. Chuẩn hóa dấu nháy đơn Tiếng Anh (tránh lỗi I’m -> I'm)
+      let cleanFullText = text.replace(/’/g, "'");
+
+      // 2. Tách văn bản theo dòng hoặc ngoặc kép (KHÔNG tách dấu nháy đơn ' để bảo vệ từ I'm, don't, can't)
+      const rawChunks = cleanFullText.split(/(\n+|["“”«»][^"“”«»]+["“”«»])/g);
+
+      speechQueue = [];
       const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
-      const lines = text.split("\n");
 
-      lines.forEach(line => {
-        if (!line.trim()) return;
+      rawChunks.forEach(chunk => {
+        if (!chunk) return;
+        let trimChunk = chunk.trim();
+        if (!trimChunk) return;
 
-        const parts = line.split(/(["'«»“”][^"'«»“”]+["'«»“”])/g);
+        // Bỏ dấu ngoặc bao quanh nếu có
+        let textToRead = trimChunk.replace(/^["“”«»]|["“”«»]$/g, '');
+        if (!textToRead.trim()) return;
 
-        parts.forEach(part => {
-          let cleanText = part ? part.trim() : "";
-          if (!cleanText) return;
+        const utterance = new SpeechSynthesisUtterance(textToRead);
 
-          cleanText = cleanText.replace(/^["'«»“”]|["'«»“”]$/g, '');
+        // Kiểm tra ngôn ngữ: Có dấu Tiếng Việt -> Giọng Việt, Không có -> Giọng Mỹ chuẩn
+        if (vietnameseRegex.test(textToRead)) {
+          utterance.lang = 'vi-VN';
+          utterance.rate = 0.9;
+        } else {
+          utterance.lang = 'en-US';
+          utterance.rate = 0.85;
+        }
 
-          const utterance = new SpeechSynthesisUtterance(cleanText);
-
-          if (vietnameseRegex.test(cleanText)) {
-            utterance.lang = 'vi-VN';
-            utterance.rate = 0.9;
-          } else {
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-          }
-
-          window.speechSynthesis.speak(utterance);
-        });
+        speechQueue.push(utterance);
       });
+
+      if (speechQueue.length > 0) {
+        currentUtteranceIndex = 0;
+        playNextInQueue();
+      }
     }
 
-    // XỬ LÝ TẠM DỪNG / TIẾP TỤC ĐỌC
+    // Phát lần lượt từng câu trong hàng đợi (Khắc phục hoàn toàn lỗi nghẹn âm thanh trên Chrome)
+    function playNextInQueue() {
+      if (currentUtteranceIndex < speechQueue.length) {
+        const utt = speechQueue[currentUtteranceIndex];
+        
+        utt.onend = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+
+        utt.onerror = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+
+        window.speechSynthesis.speak(utt);
+      } else {
+        resetPauseButton();
+      }
+    }
+
+    // TẠM DỪNG / TIẾP TỤC ĐỌC
     function togglePauseSpeech() {
       const pauseBtn = document.getElementById('pauseBtn');
       if (window.speechSynthesis.speaking) {
@@ -257,15 +290,16 @@
 
     // DỪNG HẲN ĐỌC
     function stopSpeech() {
+      speechQueue = [];
+      currentUtteranceIndex = 0;
       window.speechSynthesis.cancel();
       resetPauseButton();
     }
 
     function resetPauseButton() {
       const pauseBtn = document.getElementById('pauseBtn');
-      pauseBtn.innerText = "⏸ Tạm dừng";
-      pauseBtn.className = "bg-amber-500 hover:bg-amber-600 text-white text-xs px-2.5 py-1.5 rounded";
+      if (pauseBtn) {
+        pauseBtn.innerText = "⏸ Tạm dừng";
+        pauseBtn.className = "bg-amber-500 hover:bg-amber-600 text-white text-xs px-2.5 py-1.5 rounded";
+      }
     }
-  </script>
-</body>
-</html>
