@@ -6,18 +6,28 @@
   <title>Chatbot Tiểu học Vô Tranh 1 - Học tập & An toàn trên môi trường số</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-blue-50 p-3 md:p-6 min-h-screen flex flex-col justify-between">
+<body class="bg-blue-50/60 p-3 md:p-6 min-h-screen flex flex-col justify-between">
 
   <div>
-    <!-- Header banner có Logo trường -->
-    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-4 mb-4 flex flex-col md:flex-row items-center justify-between border-b-4 border-blue-500 gap-3">
-      <div class="flex items-center space-x-3">
-        <!-- Thay link Logo trường của thầy vào thẻ src bên dưới -->
-        <img id="schoolLogo" src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/logovotranh12.png" alt="Logo Trường" class="w-16 h-16 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991108.png'">
-        <div>
-          <h1 class="text-xl md:text-2xl font-bold text-blue-700">🤖 Chatbot Tiểu học - Học tập & An toàn trên mạng</h1>
-          <p class="text-xs md:text-sm text-gray-600">Hỗ trợ học sinh tự học từ Lớp 1 đến Lớp 5 - An toàn & Mượt mà</p>
+    <!-- HEADER BANNER MỚI: CĂN GIỮA & LOGO TO NỔI BẬT -->
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-md p-6 mb-6 text-center border-b-4 border-blue-600 relative">
+      <div class="flex flex-col items-center justify-center space-y-3">
+        
+        <!-- Khung Logo nổi bật -->
+        <div class="bg-blue-50 p-2.5 rounded-full shadow-sm border-2 border-blue-200 flex items-center justify-center">
+          <img id="schoolLogo" src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/logovotranh12.png" alt="Logo Trường" class="w-24 h-24 md:w-28 md:h-28 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991108.png'">
         </div>
+
+        <!-- Tiêu đề & Phụ đề -->
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 flex items-center justify-center gap-2">
+            🤖 Chatbot Tiểu học - Học tập & An toàn trên mạng
+          </h1>
+          <p class="text-xs md:text-sm text-gray-600 font-medium mt-1">
+            Hỗ trợ học sinh tự học từ Lớp 1 đến Lớp 5 - An toàn & Mượt mà
+          </p>
+        </div>
+
       </div>
     </div>
 
@@ -111,7 +121,7 @@
     </div>
   </div>
 
-  <!-- Footer Dòng bản quyền -->
+  <!-- FOOTER: BẢN QUYỀN -->
   <footer class="max-w-6xl mx-auto mt-6 text-center text-xs text-gray-600 border-t pt-3">
     <p class="font-bold text-blue-700">Bản quyền thuộc về thầy Phạm Đình Chiến</p>
     <p class="text-gray-500">Hệ thống hỗ trợ học tập và phát triển năng lực số cho học sinh tiểu học</p>
