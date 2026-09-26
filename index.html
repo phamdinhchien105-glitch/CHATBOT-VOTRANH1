@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Tiểu học - Học tập & An toàn trên mạng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 p-3 md:p-6 min-h-screen">
+
+  <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-4 mb-4 text-center border-b-4 border-blue-500">
+    <h1 class="text-2xl font-bold text-blue-700">🤖 Chatbot Tiểu học - Học tập & An toàn trên mạng</h1>
+    <p class="text-xs md:text-sm text-gray-600">Hỗ trợ học sinh tự học - Hỏi đáp thông minh & An toàn</p>
+  </div>
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- CỘT TRÁI: FORM NHẬP THÔNG TIN -->
+    <div class="bg-white p-5 rounded-xl shadow border">
+      <h2 class="font-bold text-base text-gray-700 mb-3 border-b pb-2">✏️ Nhập nội dung cần hỏi:</h2>
+      
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600">Em tên là gì?</label>
+          <input type="text" id="studentName" placeholder="Ví dụ: Hoàng Luận" class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600">Em học lớp mấy?</label>
+          <select id="studentGrade" class="w-full border rounded p-2 text-sm">
+            <option value="Lớp 3">Lớp 3</option>
+            <option value="Lớp 4">Lớp 4</option>
+            <option value="Lớp 5" selected>Lớp 5</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-gray-600">Mức độ học lực hiện tại:</label>
+        <select id="studentLevel" class="w-full border rounded p-2 text-sm">
+          <option value="Yếu / Mới học">Yếu / Mới học (Giải thích dễ hiểu)</option>
+          <option value="Trung bình">Trung bình</option>
+          <option value="Khá / Giỏi">Khá / Giỏi</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-gray-600">Nội dung câu hỏi:</label>
+        <textarea id="questionInput" rows="3" class="w-full border rounded p-2 text-sm" placeholder="VD: Cách cộng hai phân số khác mẫu số?..."></textarea>
+      </div>
+
+      <div class="mb-4 bg-gray-50 p-2 rounded border border-dashed">
+        <label class="block text-xs font-semibold text-gray-600 mb-1">📷 Hoặc tải ảnh bài tập SGK:</label>
+        <input type="file" id="imageInput" accept="image/*" class="text-xs w-full">
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button onclick="sendQuestion()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm flex-1">
+          🚀 Hỏi Chatbot
+        </button>
+        <button onclick="startVoice()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded text-sm">
+          🎙️ Nói
+        </button>
+      </div>
+      <p id="statusText" class="text-xs text-gray-500 mt-2 italic"></p>
+    </div>
+
+    <!-- CỘT PHẢI: KẾT QUẢ HIỂN THỊ -->
+    <div class="bg-white p-5 rounded-xl shadow border flex flex-col justify-between">
+      <div>
+        <h2 class="font-bold text-base text-gray-700 mb-3 border-b pb-2">🤖 Chatbot trả lời:</h2>
+        <div id="responseBox" class="text-sm text-gray-800 space-y-2 max-h-80 overflow-y-auto p-3 bg-blue-50/50 rounded border">
+          <p class="text-gray-400 italic">Câu trả lời của Chatbot sẽ hiển thị tại đây...</p>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t flex items-center justify-between bg-gray-50 p-2 rounded">
+        <span class="text-xs font-semibold text-gray-600">🔊 Đọc câu trả lời:</span>
+        <div class="space-x-1">
+          <button onclick="speakResponse()" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded hover:bg-indigo-700">► Đọc</button>
+          <button onclick="stopSpeech()" class="bg-gray-500 text-white text-xs px-3 py-1.5 rounded hover:bg-gray-600">⏹ Dừng</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // DÁN URL WEB APP LẤY TỪ BƯỚC 2.3 VÀO DƯỚI ĐÂY
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwqorf5wvkOYDkByxbFkqm56TCz-T6ers47pX0VOa0Zv4YdbbK_MIY-Yp6osJYxPLw0Og/exec"; 
+    
+    let currentBase64Image = "";
+
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          currentBase64Image = evt.target.result;
+          document.getElementById('statusText').innerText = "✅ Đã tải ảnh lên!";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function sendQuestion() {
+      const name = document.getElementById('studentName').value || "Học sinh";
+      const grade = document.getElementById('studentGrade').value;
+      const level = document.getElementById('studentLevel').value;
+      const question = document.getElementById('questionInput').value;
+      const status = document.getElementById('statusText');
+      const responseBox = document.getElementById('responseBox');
+
+      if (!question && !currentBase64Image) {
+        alert("Em hãy nhập câu hỏi hoặc chọn ảnh bài tập nhé!");
+        return;
+      }
+
+      status.innerText = "⏳ Chatbot đang suy nghĩ...";
+      responseBox.innerHTML = "<p class='text-blue-500 italic'>Đang xử lý dữ liệu...</p>";
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: name,
+          grade: grade,
+          level: level,
+          question: question,
+          imageBase64: currentBase64Image
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.status === "success") {
+          status.innerText = "✅ Hoàn tất!";
+          responseBox.innerHTML = data.reply.replace(/\n/g, '<br>');
+          currentBase64Image = "";
+        } else {
+          status.innerText = "❌ Đã có lỗi!";
+          responseBox.innerText = "Lỗi: " + data.message;
+        }
+      })
+      .catch(err => {
+        status.innerText = "❌ Lỗi kết nối máy chủ!";
+      });
+    }
+
+    function startVoice() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'vi-VN';
+      document.getElementById('statusText').innerText = "🎙️ Đang nghe em nói...";
+      
+      recognition.start();
+      recognition.onresult = function(event) {
+        document.getElementById('questionInput').value = event.results[0][0].transcript;
+        document.getElementById('statusText').innerText = "✅ Đã nhận diện giọng nói!";
+      };
+    }
+
+    function speakResponse() {
+      const text = document.getElementById('responseBox').innerText;
+      if (!text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'vi-VN';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+      window.speechSynthesis.cancel();
+    }
+  </script>
+</body>
+</html>
