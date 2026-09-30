@@ -144,7 +144,7 @@
 
         <div class="mb-2">
           <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Nội dung câu hỏi:</label>
-          <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập..."></textarea>
+          <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập... (Bấm Enter để gửi)"></textarea>
         </div>
 
         <!-- XEM TRƯỚC ẢNH & XÓA ẢNH -->
@@ -417,7 +417,8 @@
       }
 
       let currentPromptText = question;
-      
+      if (!currentPromptText && currentBase64Image) {
+        currentPromptText = "Em đã gửi 1 ảnh bài tập, nhờ Trợ lý quan sát ảnh và hướng dẫn giải giúp em nhé!";
       }
 
       let userBubble = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] ml-auto shadow-sm">
@@ -479,6 +480,14 @@
         status.innerText = "❌ Lỗi kết nối máy chủ!";
       });
     }
+
+    // Bổ sung sự kiện ấn Enter để gửi câu hỏi
+    document.getElementById('questionInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendQuestion();
+      }
+    });
 
     function startVoice() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
