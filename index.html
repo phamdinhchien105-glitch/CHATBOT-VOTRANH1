@@ -10,63 +10,24 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
-    /* TĂNG CỠ CHỮ CƠ SỞ TOÀN BỘ GIAO DIỆN LÊN 10% */
-    html {
-      font-size: 110%;
-    }
-
-    /* ĐỊNH DẠNG VĂN BẢN CHUẨN KHOA HỌC DÀNH CHO HỌC SINH */
-    .chat-content h1, .chat-content h2, .chat-content h3 {
-      font-weight: 700;
-      color: #1d4ed8;
-      margin-top: 0.5rem;
-      margin-bottom: 0.25rem;
-    }
-    .chat-content ul {
-      list-style-type: disc;
-      padding-left: 1.25rem;
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-    .chat-content ol {
-      list-style-type: decimal;
-      padding-left: 1.25rem;
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-    .chat-content li {
-      margin-bottom: 0.2rem;
-      line-height: 1.5;
-    }
-    .chat-content p {
-      margin-bottom: 0.4rem;
-      line-height: 1.5;
-    }
-    .chat-content strong {
-      color: #1e293b;
-      font-weight: 700;
-    }
-    .chat-content blockquote {
-      border-left: 3px solid #3b82f6;
-      padding-left: 0.5rem;
-      color: #475569;
-      font-style: italic;
-      margin: 0.4rem 0;
-    }
+    html { font-size: 110%; }
+    .chat-content h1, .chat-content h2, .chat-content h3 { font-weight: 700; color: #1d4ed8; margin-top: 0.5rem; margin-bottom: 0.25rem; }
+    .chat-content ul { list-style-type: disc; padding-left: 1.25rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
+    .chat-content ol { list-style-type: decimal; padding-left: 1.25rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
+    .chat-content li { margin-bottom: 0.2rem; line-height: 1.5; }
+    .chat-content p { margin-bottom: 0.4rem; line-height: 1.5; }
+    .chat-content strong { color: #1e293b; font-weight: 700; }
+    .chat-content blockquote { border-left: 3px solid #3b82f6; padding-left: 0.5rem; color: #475569; font-style: italic; margin: 0.4rem 0; }
   </style>
 </head>
 <body class="bg-blue-50/60 p-2 md:p-4 min-h-screen flex flex-col justify-between text-gray-800 relative">
 
-  <!-- POPUP MENU BÔI ĐEN VĂN BẢN (NỔI TẠI VỊ TRÍ CON TRỎ) -->
+  <!-- POPUP MENU BÔI ĐEN VĂN BẢN -->
   <div id="selectionMenu" class="hidden fixed z-50 bg-gray-900 text-white rounded-lg shadow-xl p-1.5 flex flex-col gap-1 text-xs transition-all">
     <div class="flex items-center space-x-1">
-      <button onclick="speakSelectedText()" class="hover:bg-blue-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">
-        🔊 Đọc lại
-      </button>
+      <button onclick="speakSelectedText()" class="hover:bg-blue-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">🔊 Đọc lại</button>
       <span class="text-gray-600">|</span>
-      <button onclick="translateSelectedText()" class="hover:bg-green-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">
-        🌐 Dịch sang tiếng Việt
-      </button>
+      <button onclick="translateSelectedText()" class="hover:bg-green-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">🌐 Dịch sang tiếng Việt</button>
     </div>
     <div id="translationBox" class="hidden bg-gray-800 text-yellow-300 p-2 rounded text-[12px] max-w-xs mt-1 border border-gray-700"></div>
   </div>
@@ -74,23 +35,14 @@
   <div class="max-w-6xl mx-auto w-full">
     <!-- BANNER TRƯỜNG -->
     <div class="max-w-6xl mx-auto mb-3">
-      <img id="schoolBanner" 
-           src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/nen1.jpg" 
-           alt="Banner Trường Tiểu học Vô Tranh 1" 
-           class="w-full h-auto rounded-2xl shadow-md border-b-4 border-blue-600 object-contain">
+      <img id="schoolBanner" src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/nen1.jpg" alt="Banner Trường Tiểu học Vô Tranh 1" class="w-full h-auto rounded-2xl shadow-md border-b-4 border-blue-600 object-contain">
     </div>
 
     <!-- KHUNG TIÊU ĐỀ -->
     <div class="bg-white rounded-xl shadow-sm px-4 py-2.5 mb-3 text-center border border-blue-100">
-      <h1 class="text-xl md:text-2xl font-extrabold text-blue-700 flex items-center justify-center gap-1.5">
-        🤖 Chatbot Tiểu học Vô Tranh 1
-      </h1>
-      <h2 class="text-sm md:text-base font-bold text-indigo-600 mt-0.5">
-        Học tập & An toàn trên môi trường số
-      </h2>
-      <p class="text-[12px] md:text-xs text-gray-500 font-medium mt-1">
-        Em không nhập mật khẩu, địa chỉ, số điện thoại hoặc thông tin riêng tư. Khi gặp vấn đề đáng lo, hãy báo ngay cho cha mẹ hoặc thầy cô.
-      </p>
+      <h1 class="text-xl md:text-2xl font-extrabold text-blue-700 flex items-center justify-center gap-1.5">🤖 Chatbot Tiểu học Vô Tranh 1</h1>
+      <h2 class="text-sm md:text-base font-bold text-indigo-600 mt-0.5">Học tập & An toàn trên môi trường số</h2>
+      <p class="text-[12px] md:text-xs text-gray-500 font-medium mt-1">Em không nhập mật khẩu, địa chỉ, số điện thoại hoặc thông tin riêng tư. Khi gặp vấn đề đáng lo, hãy báo ngay cho cha mẹ hoặc thầy cô.</p>
     </div>
 
     <!-- LAYOUT 2 CỘT -->
@@ -157,19 +109,13 @@
               <img id="imagePreview" src="" class="w-10 h-10 object-cover rounded border">
               <span class="text-[12px] text-blue-800 font-medium">Đã chọn 1 ảnh</span>
             </div>
-            <button onclick="clearImage()" class="bg-red-500 hover:bg-red-600 text-white text-[11px] px-2 py-1 rounded transition font-bold">
-              ❌ Xóa ảnh
-            </button>
+            <button onclick="clearImage()" class="bg-red-500 hover:bg-red-600 text-white text-[11px] px-2 py-1 rounded transition font-bold">❌ Xóa ảnh</button>
           </div>
         </div>
 
         <div class="flex flex-wrap gap-2">
-          <button onclick="sendQuestion()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-3 rounded text-xs flex-1 transition">
-            🚀 Gửi câu hỏi
-          </button>
-          <button onclick="startVoice()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded text-xs transition">
-            🎙️ Nói
-          </button>
+          <button onclick="sendQuestion()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-3 rounded text-xs flex-1 transition">🚀 Gửi câu hỏi</button>
+          <button onclick="startVoice()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded text-xs transition">🎙️ Nói</button>
         </div>
         <p id="statusText" class="text-[12px] text-gray-500 mt-1 italic"></p>
       </div>
@@ -178,9 +124,7 @@
       <div class="bg-white p-3.5 rounded-xl shadow-sm border flex flex-col justify-between h-[400px]">
         <div class="flex items-center justify-between border-b pb-1.5 mb-2">
           <h2 class="font-bold text-sm text-gray-700">💬 Hội thoại học tập:</h2>
-          <button onclick="clearChat()" class="text-[12px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-2 py-0.5 rounded transition">
-            🔄 Cuộc trò chuyện mới
-          </button>
+          <button onclick="clearChat()" class="text-[12px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-2 py-0.5 rounded transition">🔄 Cuộc trò chuyện mới</button>
         </div>
 
         <div id="responseBox" class="text-xs space-y-2 overflow-y-auto p-2 bg-blue-50/30 rounded border flex-1 mb-2">
@@ -207,7 +151,7 @@
   </footer>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbx1N3l60eKlGa36iD7WMzlsVmih7IEOH41wo-AnEIXRTEFJjNSryoE3dGVzfk46ntiYTw/exec"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz98Ys3lNqa1ok-Dv0dMs-i6z4T8WXTZ6Vd_1FvVqWxOdJIue4ZFFdc8vZB7-q7tiHq3g/exec"; 
     
     let currentBase64Image = "";
     let chatHistory = [];
@@ -216,9 +160,7 @@
     let speechQueue = [];
     let currentUtteranceIndex = 0;
 
-    // -------------------------------------------------------------
-    // 1. XỬ LÝ BÔI ĐEN VĂN BẢN & MENU NỔI (ĐỌC LẠI / DỊCH)
-    // -------------------------------------------------------------
+    // 1. XỬ LÝ BÔI ĐEN VĂN BẢN & MENU NỔI
     function handleSelection(e) {
       setTimeout(() => {
         const selection = window.getSelection();
@@ -289,147 +231,143 @@
       });
     }
 
-    // -------------------------------------------------------------
-    // II. XỬ LÝ ÂM THANH ĐỌC CHUẨN XÁC KHÔNG BỎ TỪ KHỎI THẺ KỸ THUẬT
-    // 1. CHUYỂN ĐỔI KÝ HIỆU TOÁN HỌC THÀNH CHỮ ĐỂ TTS ĐỌC RÕ RÀNG
-function convertMathToSpeechText(text) {
-  if (!text) return "";
-  
-  let res = text
-    // Xử lý LaTeX công thức toán
-    .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2')
-    .replace(/\\times/g, ' nhân ')
-    .replace(/\\div/g, ' chia ')
-    .replace(/\\leq/g, ' bé hơn hoặc bằng ')
-    .replace(/\\geq/g, ' lớn hơn hoặc bằng ')
-    .replace(/\$/g, '');
+    // 2. XỬ LÝ ÂM THANH ĐỌC CHUẨN XÁC (SỬA DẤU TOÁN & TIẾNG ANH)
+    function convertMathToSpeechText(text) {
+      if (!text) return "";
+      let res = text
+        .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2')
+        .replace(/\\times/g, ' nhân ')
+        .replace(/\\div/g, ' chia ')
+        .replace(/\\leq/g, ' bé hơn hoặc bằng ')
+        .replace(/\\geq/g, ' lớn hơn hoặc bằng ')
+        .replace(/\$/g, '');
 
-  // Xử lý các phép toán cơ bản (+, =, *, x, :, /, >)
-  res = res.replace(/\+/g, ' cộng ')
-           .replace(/=/g, ' bằng ')
-           .replace(/[×*]/g, ' nhân ')
-           .replace(/÷/g, ' chia ')
-           .replace(/>/g, ' lớn hơn ')
-           .replace(/</g, ' bé hơn ');
+      res = res.replace(/\+/g, ' cộng ')
+               .replace(/=/g, ' bằng ')
+               .replace(/[×*]/g, ' nhân ')
+               .replace(/÷/g, ' chia ')
+               .replace(/>/g, ' lớn hơn ')
+               .replace(/</g, ' bé hơn ');
 
-  // Xử lý dấu chia (:) giữa các con số (tránh ảnh hưởng đến dấu hai chấm trong văn bản)
-  res = res.replace(/(\d+)\s*:\s*(\d+)/g, '$1 chia $2');
+      res = res.replace(/(\d+)\s*:\s*(\d+)/g, '$1 chia $2');
+      res = res.replace(/(\d+)\s*-\s*(\d+)/g, '$1 trừ $2')
+               .replace(/\s+-\s+/g, ' trừ ');
 
-  // Xử lý dấu trừ (-) giữa hai số (tránh ảnh hưởng từ phiên âm có gạch nối như flow-ờ)
-  res = res.replace(/(\d+)\s*-\s*(\d+)/g, '$1 trừ $2')
-           .replace(/\s+-\s+/g, ' trừ ');
-
-  return res;
-}
-
-// 2. TRÍCH XUẤT VĂN BẢN THUẦN TỪ MARKDOWN & PHÉP TOÁN
-function extractPureTextFromMarkdown(markdownText) {
-  if (!markdownText) return "";
-  let rawHtml = marked.parse(markdownText);
-  let tempDiv = document.createElement("div");
-  tempDiv.innerHTML = rawHtml;
-  
-  let pureText = tempDiv.innerText || tempDiv.textContent || "";
-  
-  // Chuyển đổi toàn bộ ký hiệu toán học sang chữ
-  return convertMathToSpeechText(pureText);
-}
-
-// 3. NHẬN DIỆN NGÔN NGỮ BẰNG BỘ LỌC THÔNG MINH
-function getLanguageForText(text) {
-  const cleanText = text.trim();
-  if (!cleanText) return 'vi-VN';
-
-  // Nếu chứa ký tự có dấu Tiếng Việt => Bắt buộc đọc giọng Tiếng Việt
-  const vietnameseDiacritics = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
-  if (vietnameseDiacritics.test(cleanText)) {
-    return 'vi-VN';
-  }
-
-  // Danh sách từ nhận diện Tiếng Anh phổ biến & dấu nháy đơn viết tắt tiếng Anh (don't, it's...)
-  const englishWordRegex = /\b(i|don't|like|flower|flowers|love|hate|cat|dog|apple|book|pen|pencil|teacher|student|school|hello|goodbye|what|where|when|why|how|yes|no|and|or|not|is|are|am|have|has|do|does|can|could|would|should|this|that|these|those|my|your|his|her|its|our|their)\b/i;
-  
-  if (/'[a-z]|`[a-z]/i.test(cleanText) || englishWordRegex.test(cleanText)) {
-    return 'en-US';
-  }
-
-  // Nếu là một chuỗi gồm nhiều từ Tiếng Anh không dấu
-  const pureWords = cleanText.split(/\s+/);
-  if (pureWords.length > 1 && pureWords.every(w => /^[a-zA-Z'"`]+$/.test(w))) {
-    return 'en-US';
-  }
-
-  return 'vi-VN';
-}
-
-// 4. TÁCH CÂU THÀNH CÁC ĐOẠN ĐỘC LẬP ANH - VIỆT THEO NGOẶC VÀ DẤU BÁO
-function parseMultiLangSegments(text) {
-  let results = [];
-  // Bắt tất cả các nội dung nằm trong dấu ngoặc "", '', “”, ‘’, ``, ()
-  const regex = /("([^"]+)"|'([^']+)'|“([^”]+)”|‘([^’]+)’|`([^`]+)`|\(([^)]+)\))/g;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = regex.exec(text)) !== null) {
-    // Đoạn văn bản đứng trước dấu ngoặc
-    let prefix = text.substring(lastIndex, match.index).trim();
-    if (prefix) {
-      results.push({ text: prefix, lang: getLanguageForText(prefix) });
+      return res;
     }
 
-    // Nội dung bên trong dấu ngoặc (Ví dụ: "I", "don't like", "flowers")
-    let insideText = match[2] || match[3] || match[4] || match[5] || match[6] || match[7] || match[0];
-    insideText = insideText.replace(/['"“”‘’()`]/g, '').trim();
-
-    if (insideText) {
-      results.push({ text: insideText, lang: getLanguageForText(insideText) });
+    function extractPureTextFromMarkdown(markdownText) {
+      if (!markdownText) return "";
+      let rawHtml = marked.parse(markdownText);
+      let tempDiv = document.createElement("div");
+      tempDiv.innerHTML = rawHtml;
+      let pureText = tempDiv.innerText || tempDiv.textContent || "";
+      return convertMathToSpeechText(pureText);
     }
-    lastIndex = regex.lastIndex;
-  }
 
-  // Đoạn còn lại sau ngoặc cuối cùng
-  let suffix = text.substring(lastIndex).trim();
-  if (suffix) {
-    results.push({ text: suffix, lang: getLanguageForText(suffix) });
-  }
+    function getLanguageForText(text) {
+      const cleanText = text.trim();
+      if (!cleanText) return 'vi-VN';
 
-  return results;
-}
+      const vietnameseDiacritics = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+      if (vietnameseDiacritics.test(cleanText)) {
+        return 'vi-VN';
+      }
 
-// 5. PHÁT ÂM CÂU TRẢ LỜI ĐÃ TỐI ƯU DẠNG HÀNG ĐỢI
-function speakLastResponse() {
-  if (!lastBotReply) return;
-  togglePauseSpeech();
-
-  const pureText = extractPureTextFromMarkdown(lastBotReply);
-  const rawParagraphs = pureText.split(/(\n+|[.:!?])/g);
-  speechQueue = [];
-
-  rawParagraphs.forEach(para => {
-    let trimPara = para.trim();
-    if (!trimPara || trimPara.match(/^[.:!?\n]+$/)) return;
-
-    // Tách riêng từng cụm từ Anh / Việt trong đoạn
-    const segments = parseMultiLangSegments(trimPara);
-    segments.forEach(seg => {
-      if (!seg.text.trim()) return;
+      const englishWordRegex = /\b(i|don't|like|flower|flowers|love|hate|cat|dog|apple|book|pen|pencil|teacher|student|school|hello|goodbye|what|where|when|why|how|yes|no|and|or|not|is|are|am|have|has|do|does|can|could|would|should|this|that|these|those|my|your|his|her|its|our|their)\b/i;
       
-      const utterance = new SpeechSynthesisUtterance(seg.text);
-      utterance.lang = seg.lang;
-      utterance.rate = (seg.lang === 'vi-VN') ? 0.9 : 0.85;
-      speechQueue.push(utterance);
-    });
-  });
+      if (/'[a-z]|`[a-z]/i.test(cleanText) || englishWordRegex.test(cleanText)) {
+        return 'en-US';
+      }
 
-  if (speechQueue.length > 0) {
-    currentUtteranceIndex = 0;
-    playNextInQueue();
-  }
-}
+      const pureWords = cleanText.split(/\s+/);
+      if (pureWords.length > 1 && pureWords.every(w => /^[a-zA-Z'"`]+$/.test(w))) {
+        return 'en-US';
+      }
 
-    // -------------------------------------------------------------
+      return 'vi-VN';
+    }
+
+    function parseMultiLangSegments(text) {
+      let results = [];
+      const regex = /("([^"]+)"|'([^']+)'|“([^”]+)”|‘([^’]+)’|`([^`]+)`|\(([^)]+)\))/g;
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        let prefix = text.substring(lastIndex, match.index).trim();
+        if (prefix) {
+          results.push({ text: prefix, lang: getLanguageForText(prefix) });
+        }
+
+        let insideText = match[2] || match[3] || match[4] || match[5] || match[6] || match[7] || match[0];
+        insideText = insideText.replace(/['"“”‘’()`]/g, '').trim();
+
+        if (insideText) {
+          results.push({ text: insideText, lang: getLanguageForText(insideText) });
+        }
+        lastIndex = regex.lastIndex;
+      }
+
+      let suffix = text.substring(lastIndex).trim();
+      if (suffix) {
+        results.push({ text: suffix, lang: getLanguageForText(suffix) });
+      }
+
+      return results;
+    }
+
+    function speakLastResponse() {
+      if (!lastBotReply) return;
+      togglePauseSpeech();
+
+      const pureText = extractPureTextFromMarkdown(lastBotReply);
+      const rawParagraphs = pureText.split(/(\n+|[.:!?])/g);
+      speechQueue = [];
+
+      rawParagraphs.forEach(para => {
+        let trimPara = para.trim();
+        if (!trimPara || trimPara.match(/^[.:!?\n]+$/)) return;
+
+        const segments = parseMultiLangSegments(trimPara);
+        segments.forEach(seg => {
+          if (!seg.text.trim()) return;
+          
+          const utterance = new SpeechSynthesisUtterance(seg.text);
+          utterance.lang = seg.lang;
+          utterance.rate = (seg.lang === 'vi-VN') ? 0.9 : 0.85;
+          speechQueue.push(utterance);
+        });
+      });
+
+      if (speechQueue.length > 0) {
+        currentUtteranceIndex = 0;
+        playNextInQueue();
+      }
+    }
+
+    function playNextInQueue() {
+      if (currentUtteranceIndex < speechQueue.length) {
+        const utt = speechQueue[currentUtteranceIndex];
+        utt.onend = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+        utt.onerror = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+        window.speechSynthesis.speak(utt);
+      }
+    }
+
+    function togglePauseSpeech() {
+      speechQueue = [];
+      currentUtteranceIndex = 0;
+      window.speechSynthesis.cancel();
+    }
+
     // 3. XỬ LÝ ĐÍNH KÈM ẢNH & GỬI CÂU HỎI
-    // -------------------------------------------------------------
     document.getElementById('imageInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
@@ -463,7 +401,6 @@ function speakLastResponse() {
       document.getElementById('statusText').innerText = "🔄 Đã làm mới cuộc trò chuyện sẵn sàng với câu hỏi mới!";
     }
 
-    // ĐÃ SỬA LỖI HÀM SENQUESTION CHUẨN XÁC HOÀN TOÀN
     function sendQuestion() {
       const name = document.getElementById('studentName').value || "Học sinh";
       const grade = document.getElementById('studentGrade').value;
@@ -481,7 +418,7 @@ function speakLastResponse() {
 
       let currentPromptText = question;
       if (!currentPromptText && currentBase64Image) {
-        currentPromptText = "Hãy đọc nội dung và hướng dẫn em giải bài tập trong ảnh này.";
+        currentPromptText = "Hãy đọc nội dung và giải bài tập trong ảnh này giúp em.";
       }
 
       let userBubble = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] ml-auto shadow-sm">
