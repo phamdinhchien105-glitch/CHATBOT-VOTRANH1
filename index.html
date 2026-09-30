@@ -307,42 +307,89 @@
       return pureText;
     }
 
-    function getLanguageForText(text) {
-      const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
-      const englishWordRegex = /\b(hello|hi|my|name|is|i|im|i'm|am|you|are|class|years|old|like|read|books|draw|pictures|play|toys|teacher|student|what|where|when|how|and|the|in|on|at|to|for|with|cat|dog|apple|book|pen|pencil|school|family)\b/i;
+    // 1. HÀM NHẬN DIỆN NGÔN NGỮ THÔNG MINH (VIỆT VS ANH)
+function getLanguageForText(text) {
+  const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+  
+  // Nếu có dấu tiếng Việt (kể cả từ phiên âm như "flow-ờ") => Đọc giọng Tiếng Việt
+  if (vietnameseRegex.test(text)) {
+    return 'vi-VN';
+  }
+  
+  // Nếu chỉ chứa chữ cái tiếng Anh thuần (như "flower", "cat", "apple") => Chuyển sang giọng Tiếng Anh chuẩn
+  const englishRegex = /[a-zA-Z]/;
+  if (englishRegex.test(text)) {
+    return 'en-US';
+  }
+  
+  return 'vi-VN';
+}
 
-      if (!vietnameseRegex.test(text) && englishWordRegex.test(text)) {
-        return 'en-US';
-      }
-      return 'vi-VN';
+// 2. HÀM TÁCH VĂN BẢN THÀNH CÁC ĐOẠN ĐỌC ANH - VIỆT TIÊU CHUẨN
+function parseMultiLangSegments(text) {
+  let results = [];
+  // Bắt các từ/cụm từ nằm trong dấu ngoặc kép "", '', “”, ‘’ hoặc ngoặc đơn ()
+  const regex = /("([^"]+)"|'([^']+)'|“([^”]+)”|‘([^’]+)’|\(([^)]+)\))/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Đoạn tiếng Việt trước ngoặc
+    let prefix = text.substring(lastIndex, match.index).trim();
+    if (prefix) {
+      results.push({ text: prefix, lang: getLanguageForText(prefix) });
     }
 
-    function speakLastResponse() {
-      if (!lastBotReply) return;
-      togglePauseSpeech();
+    // Nội dung trong ngoặc (VD: "flower" hoặc "flow-ờ")
+    let insideText = match[2] || match[3] || match[4] || match[5] || match[6] || match[0];
+    insideText = insideText.replace(/['"“”‘’()]/g, '').trim();
 
-      const pureText = extractPureTextFromMarkdown(lastBotReply);
-      const rawChunks = pureText.split(/(\n+|[.:!?])/g);
-      speechQueue = [];
-
-      rawChunks.forEach(chunk => {
-        let trimChunk = chunk.trim();
-        if (!trimChunk) return; // Đã sửa: Không bỏ qua từ/số ngắn
-
-        const utterance = new SpeechSynthesisUtterance(trimChunk);
-        const lang = getLanguageForText(trimChunk);
-
-        utterance.lang = lang;
-        utterance.rate = (lang === 'vi-VN') ? 0.9 : 0.85;
-
-        speechQueue.push(utterance);
-      });
-
-      if (speechQueue.length > 0) {
-        currentUtteranceIndex = 0;
-        playNextInQueue();
-      }
+    if (insideText) {
+      results.push({ text: insideText, lang: getLanguageForText(insideText) });
     }
+    lastIndex = regex.lastIndex;
+  }
+
+  // Đoạn còn lại sau ngoặc cuối cùng
+  let suffix = text.substring(lastIndex).trim();
+  if (suffix) {
+    results.push({ text: suffix, lang: getLanguageForText(suffix) });
+  }
+
+  return results;
+}
+
+// 3. HÀM ĐỌC CÂU TRẢ LỜI ĐÃ NÂNG CẤP ĐA NGÔN NGỮ
+function speakLastResponse() {
+  if (!lastBotReply) return;
+  togglePauseSpeech();
+
+  const pureText = extractPureTextFromMarkdown(lastBotReply);
+  const rawParagraphs = pureText.split(/(\n+|[.:!?])/g);
+  speechQueue = [];
+
+  rawParagraphs.forEach(para => {
+    let trimPara = para.trim();
+    if (!trimPara || trimPara.match(/^[.:!?\n]+$/)) return;
+
+    // Tách riêng tiếng Việt và tiếng Anh trong ngoặc
+    const segments = parseMultiLangSegments(trimPara);
+    segments.forEach(seg => {
+      if (!seg.text.trim()) return;
+      
+      const utterance = new SpeechSynthesisUtterance(seg.text);
+      utterance.lang = seg.lang;
+      // Tốc độ đọc: Tiếng Việt 0.9, Tiếng Anh 0.85 cho học sinh dễ nghe
+      utterance.rate = (seg.lang === 'vi-VN') ? 0.9 : 0.85;
+      speechQueue.push(utterance);
+    });
+  });
+
+  if (speechQueue.length > 0) {
+    currentUtteranceIndex = 0;
+    playNextInQueue();
+  }
+}
 
     function playNextInQueue() {
       if (currentUtteranceIndex < speechQueue.length) {
