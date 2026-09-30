@@ -290,59 +290,96 @@
     }
 
     // -------------------------------------------------------------
-    // 2. XỬ LÝ ÂM THANH ĐỌC CHUẨN XÁC KHÔNG BỎ TỪ KHỎI THẺ KỸ THUẬT
-    // -------------------------------------------------------------
-    function extractPureTextFromMarkdown(markdownText) {
-      if (!markdownText) return "";
-      let rawHtml = marked.parse(markdownText);
-      let tempDiv = document.createElement("div");
-      tempDiv.innerHTML = rawHtml;
-      
-      let pureText = tempDiv.innerText || tempDiv.textContent || "";
-      
-      pureText = pureText.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2')
-                         .replace(/\\times/g, ' nhân ')
-                         .replace(/\\div/g, ' chia ')
-                         .replace(/\$/g, '');
-      return pureText;
-    }
-
-    // 1. HÀM NHẬN DIỆN NGÔN NGỮ THÔNG MINH (VIỆT VS ANH)
-function getLanguageForText(text) {
-  const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+    // II. XỬ LÝ ÂM THANH ĐỌC CHUẨN XÁC KHÔNG BỎ TỪ KHỎI THẺ KỸ THUẬT
+    // 1. CHUYỂN ĐỔI KÝ HIỆU TOÁN HỌC THÀNH CHỮ ĐỂ TTS ĐỌC RÕ RÀNG
+function convertMathToSpeechText(text) {
+  if (!text) return "";
   
-  // Nếu có dấu tiếng Việt (kể cả từ phiên âm như "flow-ờ") => Đọc giọng Tiếng Việt
-  if (vietnameseRegex.test(text)) {
+  let res = text
+    // Xử lý LaTeX công thức toán
+    .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2')
+    .replace(/\\times/g, ' nhân ')
+    .replace(/\\div/g, ' chia ')
+    .replace(/\\leq/g, ' bé hơn hoặc bằng ')
+    .replace(/\\geq/g, ' lớn hơn hoặc bằng ')
+    .replace(/\$/g, '');
+
+  // Xử lý các phép toán cơ bản (+, =, *, x, :, /, >)
+  res = res.replace(/\+/g, ' cộng ')
+           .replace(/=/g, ' bằng ')
+           .replace(/[×*]/g, ' nhân ')
+           .replace(/÷/g, ' chia ')
+           .replace(/>/g, ' lớn hơn ')
+           .replace(/</g, ' bé hơn ');
+
+  // Xử lý dấu chia (:) giữa các con số (tránh ảnh hưởng đến dấu hai chấm trong văn bản)
+  res = res.replace(/(\d+)\s*:\s*(\d+)/g, '$1 chia $2');
+
+  // Xử lý dấu trừ (-) giữa hai số (tránh ảnh hưởng từ phiên âm có gạch nối như flow-ờ)
+  res = res.replace(/(\d+)\s*-\s*(\d+)/g, '$1 trừ $2')
+           .replace(/\s+-\s+/g, ' trừ ');
+
+  return res;
+}
+
+// 2. TRÍCH XUẤT VĂN BẢN THUẦN TỪ MARKDOWN & PHÉP TOÁN
+function extractPureTextFromMarkdown(markdownText) {
+  if (!markdownText) return "";
+  let rawHtml = marked.parse(markdownText);
+  let tempDiv = document.createElement("div");
+  tempDiv.innerHTML = rawHtml;
+  
+  let pureText = tempDiv.innerText || tempDiv.textContent || "";
+  
+  // Chuyển đổi toàn bộ ký hiệu toán học sang chữ
+  return convertMathToSpeechText(pureText);
+}
+
+// 3. NHẬN DIỆN NGÔN NGỮ BẰNG BỘ LỌC THÔNG MINH
+function getLanguageForText(text) {
+  const cleanText = text.trim();
+  if (!cleanText) return 'vi-VN';
+
+  // Nếu chứa ký tự có dấu Tiếng Việt => Bắt buộc đọc giọng Tiếng Việt
+  const vietnameseDiacritics = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+  if (vietnameseDiacritics.test(cleanText)) {
     return 'vi-VN';
   }
+
+  // Danh sách từ nhận diện Tiếng Anh phổ biến & dấu nháy đơn viết tắt tiếng Anh (don't, it's...)
+  const englishWordRegex = /\b(i|don't|like|flower|flowers|love|hate|cat|dog|apple|book|pen|pencil|teacher|student|school|hello|goodbye|what|where|when|why|how|yes|no|and|or|not|is|are|am|have|has|do|does|can|could|would|should|this|that|these|those|my|your|his|her|its|our|their)\b/i;
   
-  // Nếu chỉ chứa chữ cái tiếng Anh thuần (như "flower", "cat", "apple") => Chuyển sang giọng Tiếng Anh chuẩn
-  const englishRegex = /[a-zA-Z]/;
-  if (englishRegex.test(text)) {
+  if (/'[a-z]|`[a-z]/i.test(cleanText) || englishWordRegex.test(cleanText)) {
     return 'en-US';
   }
-  
+
+  // Nếu là một chuỗi gồm nhiều từ Tiếng Anh không dấu
+  const pureWords = cleanText.split(/\s+/);
+  if (pureWords.length > 1 && pureWords.every(w => /^[a-zA-Z'"`]+$/.test(w))) {
+    return 'en-US';
+  }
+
   return 'vi-VN';
 }
 
-// 2. HÀM TÁCH VĂN BẢN THÀNH CÁC ĐOẠN ĐỌC ANH - VIỆT TIÊU CHUẨN
+// 4. TÁCH CÂU THÀNH CÁC ĐOẠN ĐỘC LẬP ANH - VIỆT THEO NGOẶC VÀ DẤU BÁO
 function parseMultiLangSegments(text) {
   let results = [];
-  // Bắt các từ/cụm từ nằm trong dấu ngoặc kép "", '', “”, ‘’ hoặc ngoặc đơn ()
-  const regex = /("([^"]+)"|'([^']+)'|“([^”]+)”|‘([^’]+)’|\(([^)]+)\))/g;
+  // Bắt tất cả các nội dung nằm trong dấu ngoặc "", '', “”, ‘’, ``, ()
+  const regex = /("([^"]+)"|'([^']+)'|“([^”]+)”|‘([^’]+)’|`([^`]+)`|\(([^)]+)\))/g;
   let lastIndex = 0;
   let match;
 
   while ((match = regex.exec(text)) !== null) {
-    // Đoạn tiếng Việt trước ngoặc
+    // Đoạn văn bản đứng trước dấu ngoặc
     let prefix = text.substring(lastIndex, match.index).trim();
     if (prefix) {
       results.push({ text: prefix, lang: getLanguageForText(prefix) });
     }
 
-    // Nội dung trong ngoặc (VD: "flower" hoặc "flow-ờ")
-    let insideText = match[2] || match[3] || match[4] || match[5] || match[6] || match[0];
-    insideText = insideText.replace(/['"“”‘’()]/g, '').trim();
+    // Nội dung bên trong dấu ngoặc (Ví dụ: "I", "don't like", "flowers")
+    let insideText = match[2] || match[3] || match[4] || match[5] || match[6] || match[7] || match[0];
+    insideText = insideText.replace(/['"“”‘’()`]/g, '').trim();
 
     if (insideText) {
       results.push({ text: insideText, lang: getLanguageForText(insideText) });
@@ -359,7 +396,7 @@ function parseMultiLangSegments(text) {
   return results;
 }
 
-// 3. HÀM ĐỌC CÂU TRẢ LỜI ĐÃ NÂNG CẤP ĐA NGÔN NGỮ
+// 5. PHÁT ÂM CÂU TRẢ LỜI ĐÃ TỐI ƯU DẠNG HÀNG ĐỢI
 function speakLastResponse() {
   if (!lastBotReply) return;
   togglePauseSpeech();
@@ -372,14 +409,13 @@ function speakLastResponse() {
     let trimPara = para.trim();
     if (!trimPara || trimPara.match(/^[.:!?\n]+$/)) return;
 
-    // Tách riêng tiếng Việt và tiếng Anh trong ngoặc
+    // Tách riêng từng cụm từ Anh / Việt trong đoạn
     const segments = parseMultiLangSegments(trimPara);
     segments.forEach(seg => {
       if (!seg.text.trim()) return;
       
       const utterance = new SpeechSynthesisUtterance(seg.text);
       utterance.lang = seg.lang;
-      // Tốc độ đọc: Tiếng Việt 0.9, Tiếng Anh 0.85 cho học sinh dễ nghe
       utterance.rate = (seg.lang === 'vi-VN') ? 0.9 : 0.85;
       speechQueue.push(utterance);
     });
@@ -390,27 +426,6 @@ function speakLastResponse() {
     playNextInQueue();
   }
 }
-
-    function playNextInQueue() {
-      if (currentUtteranceIndex < speechQueue.length) {
-        const utt = speechQueue[currentUtteranceIndex];
-        utt.onend = function() {
-          currentUtteranceIndex++;
-          playNextInQueue();
-        };
-        utt.onerror = function() {
-          currentUtteranceIndex++;
-          playNextInQueue();
-        };
-        window.speechSynthesis.speak(utt);
-      }
-    }
-
-    function togglePauseSpeech() {
-      speechQueue = [];
-      currentUtteranceIndex = 0;
-      window.speechSynthesis.cancel();
-    }
 
     // -------------------------------------------------------------
     // 3. XỬ LÝ ĐÍNH KÈM ẢNH & GỬI CÂU HỎI
