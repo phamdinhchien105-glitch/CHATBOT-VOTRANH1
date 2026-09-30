@@ -144,7 +144,7 @@
 
         <div class="mb-2">
           <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Nội dung câu hỏi:</label>
-          <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập... (Bấm Enter để gửi)"></textarea>
+          <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập..."></textarea>
         </div>
 
         <!-- XEM TRƯỚC ẢNH & XÓA ẢNH -->
@@ -207,7 +207,7 @@
   </footer>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxOxm62ViT5fW2CGhMIZiFwIm4RWKgSCNP4Dvbu5EBAUZ8DQWWRklTmXJ1ZO7ALdW-o5w/exec"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx1N3l60eKlGa36iD7WMzlsVmih7IEOH41wo-AnEIXRTEFJjNSryoE3dGVzfk46ntiYTw/exec"; 
     
     let currentBase64Image = "";
     let chatHistory = [];
@@ -327,7 +327,7 @@
 
       rawChunks.forEach(chunk => {
         let trimChunk = chunk.trim();
-        if (!trimChunk || trimChunk.length < 2) return;
+        if (!trimChunk) return; // Đã sửa: Không bỏ qua từ/số ngắn
 
         const utterance = new SpeechSynthesisUtterance(trimChunk);
         const lang = getLanguageForText(trimChunk);
@@ -401,6 +401,7 @@
       document.getElementById('statusText').innerText = "🔄 Đã làm mới cuộc trò chuyện sẵn sàng với câu hỏi mới!";
     }
 
+    // ĐÃ SỬA LỖI HÀM SENQUESTION CHUẨN XÁC HOÀN TOÀN
     function sendQuestion() {
       const name = document.getElementById('studentName').value || "Học sinh";
       const grade = document.getElementById('studentGrade').value;
@@ -418,7 +419,7 @@
 
       let currentPromptText = question;
       if (!currentPromptText && currentBase64Image) {
-        currentPromptText = "Em đã gửi 1 ảnh bài tập, nhờ Trợ lý quan sát ảnh và hướng dẫn giải giúp em nhé!";
+        currentPromptText = "Hãy đọc nội dung và hướng dẫn em giải bài tập trong ảnh này.";
       }
 
       let userBubble = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] ml-auto shadow-sm">
@@ -480,14 +481,6 @@
         status.innerText = "❌ Lỗi kết nối máy chủ!";
       });
     }
-
-    // Bổ sung sự kiện ấn Enter để gửi câu hỏi
-    document.getElementById('questionInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendQuestion();
-      }
-    });
 
     function startVoice() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
