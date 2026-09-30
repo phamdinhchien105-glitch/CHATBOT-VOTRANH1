@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" style="font-size: 110%;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,11 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
+    /* TĂNG CỠ CHỮ CƠ SỞ TOÀN BỘ GIAO DIỆN LÊN 10% */
+    html {
+      font-size: 110%;
+    }
+
     /* ĐỊNH DẠNG VĂN BẢN CHUẨN KHOA HỌC DÀNH CHO HỌC SINH */
     .chat-content h1, .chat-content h2, .chat-content h3 {
       font-weight: 700;
@@ -63,28 +68,27 @@
         🌐 Dịch sang tiếng Việt
       </button>
     </div>
-    <div id="translationBox" class="hidden bg-gray-800 text-yellow-300 p-2 rounded text-[11px] max-w-xs mt-1 border border-gray-700"></div>
+    <div id="translationBox" class="hidden bg-gray-800 text-yellow-300 p-2 rounded text-[12px] max-w-xs mt-1 border border-gray-700"></div>
   </div>
 
   <div class="max-w-6xl mx-auto w-full">
     <!-- BANNER TRƯỜNG -->
-    <div class="mb-2 bg-white rounded-xl shadow-sm border-b-2 border-blue-600 overflow-hidden flex items-center justify-center">
+    <div class="max-w-6xl mx-auto mb-3">
       <img id="schoolBanner" 
            src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/nen1.jpg" 
            alt="Banner Trường Tiểu học Vô Tranh 1" 
-           class="w-full max-h-24 md:max-h-32 object-contain bg-white"
-           onerror="this.src='https://via.placeholder.com/800x120?text=Truong+Tieu+Hoc+Vo+Tranh+1'">
+           class="w-full h-auto rounded-2xl shadow-md border-b-4 border-blue-600 object-contain">
     </div>
 
     <!-- KHUNG TIÊU ĐỀ -->
-    <div class="bg-white rounded-xl shadow-sm px-4 py-2 mb-3 text-center border border-blue-100">
+    <div class="bg-white rounded-xl shadow-sm px-4 py-2.5 mb-3 text-center border border-blue-100">
       <h1 class="text-xl md:text-2xl font-extrabold text-blue-700 flex items-center justify-center gap-1.5">
         🤖 Chatbot Tiểu học Vô Tranh 1
       </h1>
-      <h2 class="text-sm md:text-base font-bold text-indigo-600">
+      <h2 class="text-sm md:text-base font-bold text-indigo-600 mt-0.5">
         Học tập & An toàn trên môi trường số
       </h2>
-      <p class="text-[11px] md:text-xs text-gray-500 font-medium mt-1">
+      <p class="text-[12px] md:text-xs text-gray-500 font-medium mt-1">
         Em không nhập mật khẩu, địa chỉ, số điện thoại hoặc thông tin riêng tư. Khi gặp vấn đề đáng lo, hãy báo ngay cho cha mẹ hoặc thầy cô.
       </p>
     </div>
@@ -96,13 +100,13 @@
       <div class="bg-white p-3.5 rounded-xl shadow-sm border">
         <h2 class="font-bold text-sm text-gray-700 mb-2 border-b pb-1.5">✏️ Thông tin & Câu hỏi:</h2>
         
-        <div class="grid grid-cols-2 gap-2 mb-2">
+        <div class="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Em tên là gì?</label>
+            <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Em tên là gì?</label>
             <input type="text" id="studentName" placeholder="Ví dụ: Trúc Linh" class="w-full border rounded p-1.5 text-xs focus:ring-1 focus:ring-blue-400">
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Em học lớp mấy?</label>
+            <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Em học lớp mấy?</label>
             <select id="studentGrade" class="w-full border rounded p-1.5 text-xs">
               <option value="Lớp 1">Lớp 1</option>
               <option value="Lớp 2">Lớp 2</option>
@@ -113,9 +117,9 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-2">
+        <div class="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Môn học / Chủ đề:</label>
+            <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Môn học / Chủ đề:</label>
             <select id="studentSubject" class="w-full border rounded p-1.5 text-xs bg-blue-50/50 font-medium">
               <option value="Toán học">Toán học</option>
               <option value="Tiếng Việt">Tiếng Việt</option>
@@ -124,12 +128,12 @@
               <option value="Tin học">Tin học</option>
               <option value="Đạo đức">Đạo đức</option>
               <option value="Tiếng Anh">Tiếng Anh</option>
-              <option value="Công nghệ">An toàn mạng</option>
+              <option value="Công nghệ">Công nghệ</option>
               <option value="An toàn mạng">An toàn mạng</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Mức độ học lực:</label>
+            <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Mức độ học lực:</label>
             <select id="studentLevel" class="w-full border rounded p-1.5 text-xs">
               <option value="Yếu / Mới học">Yếu / Mới học</option>
               <option value="Trung bình" selected>Trung bình</option>
@@ -139,21 +143,21 @@
         </div>
 
         <div class="mb-2">
-          <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Nội dung câu hỏi:</label>
+          <label class="block text-[12px] font-semibold text-gray-600 mb-0.5">Nội dung câu hỏi:</label>
           <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập..."></textarea>
         </div>
 
         <!-- XEM TRƯỚC ẢNH & XÓA ẢNH -->
         <div class="mb-3 bg-gray-50 p-2 rounded border border-dashed">
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">📷 Đính kèm ảnh bài tập SGK:</label>
-          <input type="file" id="imageInput" accept="image/*" class="text-[11px] w-full">
+          <label class="block text-[12px] font-semibold text-gray-600 mb-1">📷 Đính kèm ảnh bài tập SGK:</label>
+          <input type="file" id="imageInput" accept="image/*" class="text-[12px] w-full">
           
           <div id="imagePreviewArea" class="hidden mt-2 flex items-center justify-between bg-blue-50 p-1.5 rounded border border-blue-200">
             <div class="flex items-center gap-2">
               <img id="imagePreview" src="" class="w-10 h-10 object-cover rounded border">
-              <span class="text-[11px] text-blue-800 font-medium">Đã chọn 1 ảnh</span>
+              <span class="text-[12px] text-blue-800 font-medium">Đã chọn 1 ảnh</span>
             </div>
-            <button onclick="clearImage()" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded transition font-bold">
+            <button onclick="clearImage()" class="bg-red-500 hover:bg-red-600 text-white text-[11px] px-2 py-1 rounded transition font-bold">
               ❌ Xóa ảnh
             </button>
           </div>
@@ -167,14 +171,14 @@
             🎙️ Nói
           </button>
         </div>
-        <p id="statusText" class="text-[11px] text-gray-500 mt-1 italic"></p>
+        <p id="statusText" class="text-[12px] text-gray-500 mt-1 italic"></p>
       </div>
 
       <!-- CỘT PHẢI: KHUNG CHAT HỘI THOẠI -->
       <div class="bg-white p-3.5 rounded-xl shadow-sm border flex flex-col justify-between h-[400px]">
         <div class="flex items-center justify-between border-b pb-1.5 mb-2">
           <h2 class="font-bold text-sm text-gray-700">💬 Hội thoại học tập:</h2>
-          <button onclick="clearChat()" class="text-[11px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-2 py-0.5 rounded transition">
+          <button onclick="clearChat()" class="text-[12px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-2 py-0.5 rounded transition">
             🔄 Cuộc trò chuyện mới
           </button>
         </div>
@@ -186,10 +190,10 @@
         </div>
 
         <div class="pt-2 border-t flex items-center justify-between bg-gray-50 p-1.5 rounded">
-          <span class="text-[11px] font-semibold text-gray-600">🔊 Đọc câu trả lời mới nhất:</span>
+          <span class="text-[12px] font-semibold text-gray-600">🔊 Đọc câu trả lời mới nhất:</span>
           <div class="space-x-1 flex items-center">
-            <button onclick="speakLastResponse()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] px-2.5 py-1 rounded transition">► Đọc</button>
-            <button id="pauseBtn" onclick="togglePauseSpeech()" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] px-2.5 py-1 rounded transition">⏸ Dừng</button>
+            <button onclick="speakLastResponse()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[12px] px-2.5 py-1 rounded transition">► Đọc</button>
+            <button id="pauseBtn" onclick="togglePauseSpeech()" class="bg-amber-500 hover:bg-amber-600 text-white text-[12px] px-2.5 py-1 rounded transition">⏸ Dừng</button>
           </div>
         </div>
       </div>
@@ -198,7 +202,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="max-w-6xl mx-auto w-full mt-3 text-center text-[11px] text-gray-500 border-t pt-2">
+  <footer class="max-w-6xl mx-auto w-full mt-3 text-center text-[12px] text-gray-500 border-t pt-2">
     <p class="font-bold text-blue-700">Bản quyền thuộc về thầy Phạm Đình Chiến</p>
   </footer>
 
