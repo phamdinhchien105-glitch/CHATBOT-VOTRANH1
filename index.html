@@ -4,26 +4,84 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tiểu học Vô Tranh 1 - Học tập & An toàn trên môi trường số</title>
+  <!-- THƯ VIỆN TAILWIND CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-blue-50/60 p-3 md:p-6 min-h-screen flex flex-col justify-between">
+  <!-- THƯ VIỆN CHUYỂN ĐỔI BỐ CỤC VĂN BẢN MARKDOWN THÀNH HTML -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  <div>
-    <!-- 1. BANNER NGUYÊN BẢN CỦA TRƯỜNG (HIỂN THỊ ĐẦY ĐỦ, NÉT CĂNG) -->
-    <div class="max-w-6xl mx-auto mb-3">
-      <!-- Thay URL ảnh Banner gốc của thầy vào thẻ src bên dưới -->
+  <style>
+    /* ĐỊNH DẠNG VĂN BẢN CHUẨN KHOA HỌC DÀNH CHO HỌC SINH */
+    .chat-content h1, .chat-content h2, .chat-content h3 {
+      font-weight: 700;
+      color: #1d4ed8;
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .chat-content ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    .chat-content ol {
+      list-style-type: decimal;
+      padding-left: 1.25rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    .chat-content li {
+      margin-bottom: 0.2rem;
+      line-height: 1.5;
+    }
+    .chat-content p {
+      margin-bottom: 0.4rem;
+      line-height: 1.5;
+    }
+    .chat-content strong {
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .chat-content blockquote {
+      border-left: 3px solid #3b82f6;
+      padding-left: 0.5rem;
+      color: #475569;
+      font-style: italic;
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body class="bg-blue-50/60 p-2 md:p-4 min-h-screen flex flex-col justify-between text-gray-800 relative">
+
+  <!-- POPUP MENU BÔI ĐEN VĂN BẢN (NỔI TẠI VỊ TRÍ CON TRỎ) -->
+  <div id="selectionMenu" class="hidden fixed z-50 bg-gray-900 text-white rounded-lg shadow-xl p-1.5 flex flex-col gap-1 text-xs transition-all">
+    <div class="flex items-center space-x-1">
+      <button onclick="speakSelectedText()" class="hover:bg-blue-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">
+        🔊 Đọc lại
+      </button>
+      <span class="text-gray-600">|</span>
+      <button onclick="translateSelectedText()" class="hover:bg-green-600 px-2 py-1 rounded flex items-center gap-1 font-medium transition">
+        🌐 Dịch sang tiếng Việt
+      </button>
+    </div>
+    <div id="translationBox" class="hidden bg-gray-800 text-yellow-300 p-2 rounded text-[11px] max-w-xs mt-1 border border-gray-700"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto w-full">
+    <!-- BANNER TRƯỜNG -->
+    <div class="mb-2 bg-white rounded-xl shadow-sm border-b-2 border-blue-600 overflow-hidden flex items-center justify-center">
       <img id="schoolBanner" 
            src="https://raw.githubusercontent.com/phamdinhchien105-glitch/logo-tuctranh/main/nen1.jpg" 
            alt="Banner Trường Tiểu học Vô Tranh 1" 
-           class="w-full h-auto rounded-2xl shadow-md border-b-4 border-blue-600 object-contain">
+           class="w-full max-h-24 md:max-h-32 object-contain bg-white"
+           onerror="this.src='https://via.placeholder.com/800x120?text=Truong+Tieu+Hoc+Vo+Tranh+1'">
     </div>
 
-    <!-- 2. KHUNG TIÊU ĐỀ CHATBOT (DÒNG 1 TĂNG CỠ CHỮ THÊM 10%) -->
-    <div class="bg-white rounded-xl shadow-sm px-4 py-2.5 mb-3 text-center border border-blue-100">
+    <!-- KHUNG TIÊU ĐỀ -->
+    <div class="bg-white rounded-xl shadow-sm px-4 py-2 mb-3 text-center border border-blue-100">
       <h1 class="text-xl md:text-2xl font-extrabold text-blue-700 flex items-center justify-center gap-1.5">
         🤖 Chatbot Tiểu học Vô Tranh 1
       </h1>
-      <h2 class="text-sm md:text-base font-bold text-indigo-600 mt-0.5">
+      <h2 class="text-sm md:text-base font-bold text-indigo-600">
         Học tập & An toàn trên môi trường số
       </h2>
       <p class="text-[11px] md:text-xs text-gray-500 font-medium mt-1">
@@ -32,20 +90,20 @@
     </div>
 
     <!-- LAYOUT 2 CỘT -->
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
 
-      <!-- CỘT TRÁI: FORM NHẬP THÔNG TIN -->
-      <div class="bg-white p-5 rounded-xl shadow border">
-        <h2 class="font-bold text-base text-gray-700 mb-3 border-b pb-2">✏️ Nhập nội dung cần hỏi:</h2>
+      <!-- CỘT TRÁI: FORM CÂU HỎI -->
+      <div class="bg-white p-3.5 rounded-xl shadow-sm border">
+        <h2 class="font-bold text-sm text-gray-700 mb-2 border-b pb-1.5">✏️ Thông tin & Câu hỏi:</h2>
         
-        <div class="grid grid-cols-2 gap-2 mb-3">
+        <div class="grid grid-cols-2 gap-2 mb-2">
           <div>
-            <label class="block text-xs font-semibold text-gray-600">Em tên là gì?</label>
-            <input type="text" id="studentName" placeholder="Ví dụ: Trúc Linh" class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-blue-400">
+            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Em tên là gì?</label>
+            <input type="text" id="studentName" placeholder="Ví dụ: Trúc Linh" class="w-full border rounded p-1.5 text-xs focus:ring-1 focus:ring-blue-400">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-600">Em học lớp mấy?</label>
-            <select id="studentGrade" class="w-full border rounded p-2 text-sm">
+            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Em học lớp mấy?</label>
+            <select id="studentGrade" class="w-full border rounded p-1.5 text-xs">
               <option value="Lớp 1">Lớp 1</option>
               <option value="Lớp 2">Lớp 2</option>
               <option value="Lớp 3">Lớp 3</option>
@@ -55,10 +113,10 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-3">
+        <div class="grid grid-cols-2 gap-2 mb-2">
           <div>
-            <label class="block text-xs font-semibold text-gray-600">Môn học / Chủ đề:</label>
-            <select id="studentSubject" class="w-full border rounded p-2 text-sm bg-blue-50/50 font-medium">
+            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Môn học / Chủ đề:</label>
+            <select id="studentSubject" class="w-full border rounded p-1.5 text-xs bg-blue-50/50 font-medium">
               <option value="Toán học">Toán học</option>
               <option value="Tiếng Việt">Tiếng Việt</option>
               <option value="Tự nhiên và Xã hội / Khoa học">TN&XH / Khoa học</option>
@@ -66,12 +124,13 @@
               <option value="Tin học">Tin học</option>
               <option value="Đạo đức">Đạo đức</option>
               <option value="Tiếng Anh">Tiếng Anh</option>
-              <option value="An toàn trên môi trường mạng">An toàn mạng</option>
+              <option value="Công nghệ">An toàn mạng</option>
+              <option value="An toàn mạng">An toàn mạng</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-600">Mức độ học lực:</label>
-            <select id="studentLevel" class="w-full border rounded p-2 text-sm">
+            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Mức độ học lực:</label>
+            <select id="studentLevel" class="w-full border rounded p-1.5 text-xs">
               <option value="Yếu / Mới học">Yếu / Mới học</option>
               <option value="Trung bình" selected>Trung bình</option>
               <option value="Khá / Giỏi">Khá / Giỏi</option>
@@ -79,43 +138,58 @@
           </div>
         </div>
 
-        <div class="mb-3">
-          <label class="block text-xs font-semibold text-gray-600">Nội dung câu hỏi:</label>
-          <textarea id="questionInput" rows="3" class="w-full border rounded p-2 text-sm" placeholder="VD: Giải thích cho em quy tắc cộng hai số thập phân?..."></textarea>
+        <div class="mb-2">
+          <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Nội dung câu hỏi:</label>
+          <textarea id="questionInput" rows="2" class="w-full border rounded p-1.5 text-xs" placeholder="Nhập câu hỏi hoặc chọn ảnh bài tập..."></textarea>
         </div>
 
-        <div class="mb-4 bg-gray-50 p-2 rounded border border-dashed">
-          <label class="block text-xs font-semibold text-gray-600 mb-1">📷 Hoặc tải ảnh bài tập SGK:</label>
-          <input type="file" id="imageInput" accept="image/*" class="text-xs w-full">
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-          <button onclick="sendQuestion()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm flex-1">
-            🚀 Hỏi Chatbot
-          </button>
-          <button onclick="startVoice()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded text-sm">
-            🎙️ Nói
-          </button>
-        </div>
-        <p id="statusText" class="text-xs text-gray-500 mt-2 italic"></p>
-      </div>
-
-      <!-- CỘT PHẢI: KẾT QUẢ TRẢ LỜI -->
-      <div class="bg-white p-5 rounded-xl shadow border flex flex-col justify-between">
-        <div>
-          <h2 class="font-bold text-base text-gray-700 mb-3 border-b pb-2">🤖 Chatbot trả lời:</h2>
-          <div id="responseBox" class="text-sm text-gray-800 space-y-2 max-h-80 overflow-y-auto p-3 bg-blue-50/50 rounded border">
-            <p class="text-gray-400 italic">Câu trả lời của Chatbot sẽ hiển thị tại đây...</p>
+        <!-- XEM TRƯỚC ẢNH & XÓA ẢNH -->
+        <div class="mb-3 bg-gray-50 p-2 rounded border border-dashed">
+          <label class="block text-[11px] font-semibold text-gray-600 mb-1">📷 Đính kèm ảnh bài tập SGK:</label>
+          <input type="file" id="imageInput" accept="image/*" class="text-[11px] w-full">
+          
+          <div id="imagePreviewArea" class="hidden mt-2 flex items-center justify-between bg-blue-50 p-1.5 rounded border border-blue-200">
+            <div class="flex items-center gap-2">
+              <img id="imagePreview" src="" class="w-10 h-10 object-cover rounded border">
+              <span class="text-[11px] text-blue-800 font-medium">Đã chọn 1 ảnh</span>
+            </div>
+            <button onclick="clearImage()" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded transition font-bold">
+              ❌ Xóa ảnh
+            </button>
           </div>
         </div>
 
-        <!-- BẢNG ĐIỀU KHIỂN ÂM THANH -->
-        <div class="mt-4 pt-3 border-t flex items-center justify-between bg-gray-50 p-2 rounded">
-          <span class="text-xs font-semibold text-gray-600">🔊 Điều khiển giọng đọc:</span>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="sendQuestion()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-3 rounded text-xs flex-1 transition">
+            🚀 Gửi câu hỏi
+          </button>
+          <button onclick="startVoice()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded text-xs transition">
+            🎙️ Nói
+          </button>
+        </div>
+        <p id="statusText" class="text-[11px] text-gray-500 mt-1 italic"></p>
+      </div>
+
+      <!-- CỘT PHẢI: KHUNG CHAT HỘI THOẠI -->
+      <div class="bg-white p-3.5 rounded-xl shadow-sm border flex flex-col justify-between h-[400px]">
+        <div class="flex items-center justify-between border-b pb-1.5 mb-2">
+          <h2 class="font-bold text-sm text-gray-700">💬 Hội thoại học tập:</h2>
+          <button onclick="clearChat()" class="text-[11px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-2 py-0.5 rounded transition">
+            🔄 Cuộc trò chuyện mới
+          </button>
+        </div>
+
+        <div id="responseBox" class="text-xs space-y-2 overflow-y-auto p-2 bg-blue-50/30 rounded border flex-1 mb-2">
+          <div class="bg-white border rounded-lg p-2.5 max-w-[88%] text-gray-600 shadow-sm chat-content">
+            🤖 <strong>Trợ lý Vô Tranh 1:</strong> Chào em! Trợ lý đã sẵn sàng hỗ trợ em học tập. Các câu trả lời sẽ được trình bày rõ ràng, sạch đẹp và dễ đọc nhất!
+          </div>
+        </div>
+
+        <div class="pt-2 border-t flex items-center justify-between bg-gray-50 p-1.5 rounded">
+          <span class="text-[11px] font-semibold text-gray-600">🔊 Đọc câu trả lời mới nhất:</span>
           <div class="space-x-1 flex items-center">
-            <button onclick="speakResponse()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-2.5 py-1.5 rounded">► Đọc</button>
-            <button id="pauseBtn" onclick="togglePauseSpeech()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-2.5 py-1.5 rounded">⏸ Tạm dừng</button>
-            <button onclick="stopSpeech()" class="bg-gray-500 hover:bg-gray-600 text-white text-xs px-2.5 py-1.5 rounded">⏹ Dừng</button>
+            <button onclick="speakLastResponse()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] px-2.5 py-1 rounded transition">► Đọc</button>
+            <button id="pauseBtn" onclick="togglePauseSpeech()" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] px-2.5 py-1 rounded transition">⏸ Dừng</button>
           </div>
         </div>
       </div>
@@ -123,35 +197,213 @@
     </div>
   </div>
 
-  <!-- FOOTER BẢN QUYỀN -->
-  <footer class="max-w-6xl mx-auto mt-6 text-center text-xs text-gray-600 border-t pt-3">
+  <!-- FOOTER -->
+  <footer class="max-w-6xl mx-auto w-full mt-3 text-center text-[11px] text-gray-500 border-t pt-2">
     <p class="font-bold text-blue-700">Bản quyền thuộc về thầy Phạm Đình Chiến</p>
-    <p class="text-gray-500">Hệ thống hỗ trợ học tập và phát triển năng lực số cho học sinh tiểu học Vô Tranh 1</p>
   </footer>
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbz98Ys3lNqa1ok-Dv0dMs-i6z4T8WXTZ6Vd_1FvVqWxOdJIue4ZFFdc8vZB7-q7tiHq3g/exec"; 
     
     let currentBase64Image = "";
+    let chatHistory = [];
+    let lastBotReply = "";
+    let selectedText = "";
+    let speechQueue = [];
+    let currentUtteranceIndex = 0;
 
+    // -------------------------------------------------------------
+    // 1. XỬ LÝ BÔI ĐEN VĂN BẢN & MENU NỔI (ĐỌC LẠI / DỊCH)
+    // -------------------------------------------------------------
+    function handleSelection(e) {
+      setTimeout(() => {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        const selectionMenu = document.getElementById('selectionMenu');
+        const translationBox = document.getElementById('translationBox');
+
+        if (text.length > 0 && document.getElementById('responseBox').contains(selection.anchorNode)) {
+          selectedText = text;
+          const range = selection.getRangeAt(0);
+          const rect = range.getBoundingClientRect();
+
+          selectionMenu.style.top = `${Math.max(10, rect.top - 45)}px`;
+          selectionMenu.style.left = `${Math.max(10, rect.left + (rect.width / 2) - 90)}px`;
+          selectionMenu.classList.remove('hidden');
+        } else {
+          if (e && selectionMenu && !selectionMenu.contains(e.target)) {
+            selectionMenu.classList.add('hidden');
+            translationBox.classList.add('hidden');
+          }
+        }
+      }, 10);
+    }
+
+    document.addEventListener('mouseup', handleSelection);
+    document.addEventListener('keyup', handleSelection);
+
+    function speakSelectedText() {
+      if (!selectedText) return;
+      togglePauseSpeech();
+
+      const utterance = new SpeechSynthesisUtterance(selectedText);
+      const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+
+      if (!vietnameseRegex.test(selectedText)) {
+        utterance.lang = 'en-US';
+        utterance.rate = 0.8;
+      } else {
+        utterance.lang = 'vi-VN';
+        utterance.rate = 0.9;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function translateSelectedText() {
+      if (!selectedText) return;
+      const translationBox = document.getElementById('translationBox');
+      translationBox.innerText = "⏳ Đang dịch...";
+      translationBox.classList.remove('hidden');
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          task: "translate",
+          textToTranslate: selectedText
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          translationBox.innerHTML = "💡 <strong>Dịch:</strong> " + data.reply;
+        } else {
+          translationBox.innerText = "❌ Lỗi dịch thuật!";
+        }
+      })
+      .catch(() => {
+        translationBox.innerText = "❌ Lỗi kết nối!";
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 2. XỬ LÝ ÂM THANH ĐỌC CHUẨN XÁC KHÔNG BỎ TỪ KHỎI THẺ KỸ THUẬT
+    // -------------------------------------------------------------
+    function extractPureTextFromMarkdown(markdownText) {
+      if (!markdownText) return "";
+      let rawHtml = marked.parse(markdownText);
+      let tempDiv = document.createElement("div");
+      tempDiv.innerHTML = rawHtml;
+      
+      let pureText = tempDiv.innerText || tempDiv.textContent || "";
+      
+      pureText = pureText.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2')
+                         .replace(/\\times/g, ' nhân ')
+                         .replace(/\\div/g, ' chia ')
+                         .replace(/\$/g, '');
+      return pureText;
+    }
+
+    function getLanguageForText(text) {
+      const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+      const englishWordRegex = /\b(hello|hi|my|name|is|i|im|i'm|am|you|are|class|years|old|like|read|books|draw|pictures|play|toys|teacher|student|what|where|when|how|and|the|in|on|at|to|for|with|cat|dog|apple|book|pen|pencil|school|family)\b/i;
+
+      if (!vietnameseRegex.test(text) && englishWordRegex.test(text)) {
+        return 'en-US';
+      }
+      return 'vi-VN';
+    }
+
+    function speakLastResponse() {
+      if (!lastBotReply) return;
+      togglePauseSpeech();
+
+      const pureText = extractPureTextFromMarkdown(lastBotReply);
+      const rawChunks = pureText.split(/(\n+|[.:!?])/g);
+      speechQueue = [];
+
+      rawChunks.forEach(chunk => {
+        let trimChunk = chunk.trim();
+        if (!trimChunk || trimChunk.length < 2) return;
+
+        const utterance = new SpeechSynthesisUtterance(trimChunk);
+        const lang = getLanguageForText(trimChunk);
+
+        utterance.lang = lang;
+        utterance.rate = (lang === 'vi-VN') ? 0.9 : 0.85;
+
+        speechQueue.push(utterance);
+      });
+
+      if (speechQueue.length > 0) {
+        currentUtteranceIndex = 0;
+        playNextInQueue();
+      }
+    }
+
+    function playNextInQueue() {
+      if (currentUtteranceIndex < speechQueue.length) {
+        const utt = speechQueue[currentUtteranceIndex];
+        utt.onend = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+        utt.onerror = function() {
+          currentUtteranceIndex++;
+          playNextInQueue();
+        };
+        window.speechSynthesis.speak(utt);
+      }
+    }
+
+    function togglePauseSpeech() {
+      speechQueue = [];
+      currentUtteranceIndex = 0;
+      window.speechSynthesis.cancel();
+    }
+
+    // -------------------------------------------------------------
+    // 3. XỬ LÝ ĐÍNH KÈM ẢNH & GỬI CÂU HỎI
+    // -------------------------------------------------------------
     document.getElementById('imageInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
           currentBase64Image = evt.target.result;
-          document.getElementById('statusText').innerText = "✅ Đã tải ảnh lên!";
+          document.getElementById('imagePreview').src = currentBase64Image;
+          document.getElementById('imagePreviewArea').classList.remove('hidden');
+          document.getElementById('statusText').innerText = "✅ Đã nhận ảnh!";
         };
         reader.readAsDataURL(file);
       }
     });
 
+    function clearImage() {
+      currentBase64Image = "";
+      document.getElementById('imageInput').value = "";
+      document.getElementById('imagePreview').src = "";
+      document.getElementById('imagePreviewArea').classList.add('hidden');
+      document.getElementById('statusText').innerText = "🧹 Đã xóa ảnh!";
+    }
+
+    function clearChat() {
+      chatHistory = [];
+      lastBotReply = "";
+      togglePauseSpeech();
+      document.getElementById('responseBox').innerHTML = `
+        <div class="bg-white border rounded-lg p-2.5 max-w-[88%] text-gray-600 shadow-sm chat-content">
+          🤖 <strong>Trợ lý Vô Tranh 1:</strong> Đã bắt đầu cuộc trò chuyện mới. Em hãy nhập câu hỏi nhé!
+        </div>`;
+      document.getElementById('statusText').innerText = "🔄 Đã làm mới cuộc trò chuyện sẵn sàng với câu hỏi mới!";
+    }
+
     function sendQuestion() {
-      const name = document.getElementById('studentName').value || "Trúc Linh";
+      const name = document.getElementById('studentName').value || "Học sinh";
       const grade = document.getElementById('studentGrade').value;
       const subject = document.getElementById('studentSubject').value;
       const level = document.getElementById('studentLevel').value;
-      const question = document.getElementById('questionInput').value;
+      const questionInput = document.getElementById('questionInput');
+      const question = questionInput.value.trim();
       const status = document.getElementById('statusText');
       const responseBox = document.getElementById('responseBox');
 
@@ -160,8 +412,28 @@
         return;
       }
 
+      let currentPromptText = question;
+      if (chatHistory.length === 0) {
+        currentPromptText = `[Câu hỏi từ em ${name}, học ${grade}, môn ${subject}, học lực ${level}]: ${question}`;
+      }
+
+      let userBubble = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] ml-auto shadow-sm">
+        <strong>${name}:</strong> ${question || "(Đã gửi 1 ảnh bài tập)"}
+      </div>`;
+      responseBox.innerHTML += userBubble;
+
+      questionInput.value = "";
+      let sentImage = currentBase64Image;
+      clearImage();
+
+      responseBox.scrollTop = responseBox.scrollHeight;
       status.innerText = "⏳ Chatbot đang suy nghĩ...";
-      responseBox.innerHTML = "<p class='text-blue-500 italic'>Đang xử lý dữ liệu...</p>";
+
+      let loadingId = "loading_" + Date.now();
+      responseBox.innerHTML += `<div id="${loadingId}" class="bg-white border rounded-lg p-2 max-w-[85%] text-blue-500 italic shadow-sm">
+        🤖 <strong>Trợ lý Vô Tranh 1:</strong> Đang soạn câu trả lời...
+      </div>`;
+      responseBox.scrollTop = responseBox.scrollHeight;
 
       fetch(GAS_URL, {
         method: 'POST',
@@ -170,22 +442,37 @@
           grade: grade,
           subject: subject,
           level: level,
-          question: question,
-          imageBase64: currentBase64Image
+          currentPrompt: currentPromptText,
+          imageBase64: sentImage,
+          history: chatHistory
         })
       })
       .then(res => res.json())
       .then(data => {
+        if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+
         if(data.status === "success") {
           status.innerText = "✅ Hoàn tất!";
-          responseBox.innerHTML = data.reply.replace(/\n/g, '<br>');
-          currentBase64Image = "";
+          lastBotReply = data.reply;
+
+          chatHistory.push({ role: "user", parts: [{ text: currentPromptText }] });
+          chatHistory.push({ role: "model", parts: [{ text: data.reply }] });
+
+          let formattedReply = marked.parse(data.reply);
+
+          let botBubble = `<div class="bg-white border rounded-lg p-2.5 max-w-[88%] text-gray-800 shadow-sm chat-content">
+            🤖 <strong>Trợ lý Vô Tranh 1:</strong><br>${formattedReply}
+          </div>`;
+          responseBox.innerHTML += botBubble;
+          responseBox.scrollTop = responseBox.scrollHeight;
+
         } else {
           status.innerText = "❌ Đã có lỗi!";
-          responseBox.innerText = "Lỗi: " + data.message;
+          responseBox.innerHTML += `<div class="bg-red-50 text-red-600 border border-red-200 rounded-lg p-2 max-w-[85%]">❌ Lỗi: ${data.message}</div>`;
         }
       })
       .catch(err => {
+        if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
         status.innerText = "❌ Lỗi kết nối máy chủ!";
       });
     }
@@ -205,133 +492,6 @@
         document.getElementById('questionInput').value = event.results[0][0].transcript;
         document.getElementById('statusText').innerText = "✅ Đã nhận diện giọng nói!";
       };
-    }
-
-    // 1. LÀM SẠCH CÔNG THỨC TOÁN HỌC LATEX & KÝ TỰ ĐẶC BIỆT
-    function cleanTextForSpeech(text) {
-      if (!text) return "";
-      let t = text;
-
-      t = t.replace(/’/g, "'");
-      t = t.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 phần $2');
-      t = t.replace(/\\times/g, ' nhân ');
-      t = t.replace(/\\div/g, ' chia ');
-      t = t.replace(/\\cdot/g, ' nhân ');
-      t = t.replace(/\\leq/g, ' nhỏ hơn hoặc bằng ');
-      t = t.replace(/\\geq/g, ' lớn hơn hoặc bằng ');
-      t = t.replace(/\\neq/g, ' khác ');
-
-      t = t.replace(/\$/g, '');
-      t = t.replace(/[*#_~`]/g, '');
-      t = t.replace(/\\/g, '');
-
-      return t;
-    }
-
-    // 2. NHẬN DIỆN NGÔN NGỮ GIỌNG ĐỌC
-    function getLanguageForText(text) {
-      const vietnameseRegex = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
-      const englishWordRegex = /\b(hello|hi|my|name|is|i|im|i'm|am|you|are|class|years|old|like|read|books|draw|pictures|play|toys|teacher|student|what|where|when|how|and|the|in|on|at|to|for|with)\b/i;
-
-      if (!vietnameseRegex.test(text) && englishWordRegex.test(text)) {
-        return 'en-US';
-      }
-
-      return 'vi-VN';
-    }
-
-    // 3. XỬ LÝ HÀNG ĐỢI ÂM THANH
-    let speechQueue = [];
-    let currentUtteranceIndex = 0;
-
-    function speakResponse() {
-      const responseBox = document.getElementById('responseBox');
-      if (!responseBox) return;
-      const rawText = responseBox.innerText;
-      if (!rawText || rawText.includes("Câu trả lời của Chatbot")) return;
-
-      stopSpeech();
-
-      const cleanedText = cleanTextForSpeech(rawText);
-      const rawChunks = cleanedText.split(/(\n+|["“”«»][^"“”«»]+["“”«»])/g);
-
-      speechQueue = [];
-
-      rawChunks.forEach(chunk => {
-        if (!chunk) return;
-        let trimChunk = chunk.trim();
-        if (!trimChunk) return;
-
-        let textToRead = trimChunk.replace(/^["“”«»]|["“”«»]$/g, '').trim();
-        if (!textToRead) return;
-
-        const utterance = new SpeechSynthesisUtterance(textToRead);
-        const lang = getLanguageForText(textToRead);
-
-        utterance.lang = lang;
-        if (lang === 'vi-VN') {
-          utterance.rate = 0.9;
-        } else {
-          utterance.rate = 0.85;
-        }
-
-        speechQueue.push(utterance);
-      });
-
-      if (speechQueue.length > 0) {
-        currentUtteranceIndex = 0;
-        playNextInQueue();
-      }
-    }
-
-    function playNextInQueue() {
-      if (currentUtteranceIndex < speechQueue.length) {
-        const utt = speechQueue[currentUtteranceIndex];
-        
-        utt.onend = function() {
-          currentUtteranceIndex++;
-          playNextInQueue();
-        };
-
-        utt.onerror = function() {
-          currentUtteranceIndex++;
-          playNextInQueue();
-        };
-
-        window.speechSynthesis.speak(utt);
-      } else {
-        resetPauseButton();
-      }
-    }
-
-    function togglePauseSpeech() {
-      const pauseBtn = document.getElementById('pauseBtn');
-      if (window.speechSynthesis.speaking) {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-          pauseBtn.innerText = "⏸ Tạm dừng";
-          pauseBtn.className = "bg-amber-500 hover:bg-amber-600 text-white text-xs px-2.5 py-1.5 rounded";
-        } else {
-          window.speechSynthesis.pause();
-          pauseBtn.innerText = "▶ Tiếp tục";
-          pauseBtn.className = "bg-green-600 hover:bg-green-700 text-white text-xs px-2.5 py-1.5 rounded";
-        }
-      }
-    }
-
-    function stopSpeech() {
-      speechQueue = [];
-      currentUtteranceIndex = 0;
-      window.speechSynthesis.cancel();
-      resetPauseButton();
-    }
-
-    function resetPauseButton() {
-      const pauseBtn = document.getElementById('pauseBtn');
-      if (pauseBtn) {
-        pauseBtn.innerText = "⏸ Tạm dừng";
-        pauseBtn.className = "bg-amber-500 hover:bg-amber-600 text-white text-xs px-2.5 py-1.5 rounded";
-      }
     }
   </script>
 </body>
